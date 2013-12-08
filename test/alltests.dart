@@ -25,21 +25,21 @@ main() {
   
   Neo4Dart.init("127.0.0.1").then((Neo4Dart r) {
     neo4d = r;
-//    transactionnal();
-//    serviceRoot();
-//    streaming();
-//    cypher();
-//    propertyValues();
-//    nodes();
-//    relationShips();
-//    relationShipTypes();
-//    nodeProperties();
-//    relationshipProperties();
-//    nodeLabels();
-//    indexing();
-//    constraints();
-//    traversals();
-//    graphAlgo();
+    transactionnal();
+    serviceRoot();
+    streaming();
+    cypher();
+    propertyValues();
+    nodes();
+    relationShips();
+    relationShipTypes();
+    nodeProperties();
+    relationshipProperties();
+    nodeLabels();
+    indexing();
+    constraints();
+    traversals();
+    graphAlgo();
     batch();
 //    legacyIndexing();
 //    uniqueIndexing();
