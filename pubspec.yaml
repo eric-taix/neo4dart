@@ -1,0 +1,7 @@
+name: neo4dart
+author: Eric Taix
+description: A library to request a Neo4J server using HTTP / REST requests with Dart.
+dependencies:
+  json: any
+  log4dart: any
+  unittest: any
