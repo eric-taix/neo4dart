@@ -28,6 +28,4 @@ This driver is in a early development stage. You can use it at your own risks !
 - More examples  
   
 - Benchmark
-
-#Licence  
-
+ 
