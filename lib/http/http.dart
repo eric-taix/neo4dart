@@ -8,11 +8,21 @@ class RestRequest {
   String _url;
   Object _body;
   
-  RestRequest(this._url, this._method, [this._body]);
+  RestRequest(String this._url, String this._method, [Object this._body]);
   
   String get method => _method;
   String get url => _url;
   Object get body => _body;
+}
+
+
+/**
+ * A relative (to the Neo4j base URL) Rest HttpRequest definition
+ */
+class RelativeRestRequest extends RestRequest {
+  
+  RelativeRestRequest(String relativeUrl, String method, [Object body]) : super(Neo4Dart.get()._baseUrl+relativeUrl, method, body);
+  
 }
 
 /**

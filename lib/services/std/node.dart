@@ -36,7 +36,7 @@ class Labels extends Object with RestRunnable {
   Future remove(String label, {ServiceExecutor executor : null}) {
     Completer<Node> completer = new Completer();
     RestRequest request = new RestRequest('${_url}/${label}', 'DELETE');
-    run(executor, request).then((_) {
+    run(request, executor : executor).then((_) {
       completer.complete();
     }, onError: (e) {
       completer.completeError(e);
@@ -50,7 +50,7 @@ class Labels extends Object with RestRunnable {
   Future _addLabels(Object labels, String method, {ServiceExecutor executor : null}) {
     Completer<Node> completer = new Completer();
     RestRequest request = new RestRequest(_url, method, labels);
-    run(executor, request).then((_) {
+    run(request, executor : executor).then((_) {
       completer.complete();
     }, onError: (e) {
       completer.completeError(e);
@@ -64,7 +64,7 @@ class Labels extends Object with RestRunnable {
   Future<List<String>> get({ServiceExecutor executor : null}) {
     Completer<Node> completer = new Completer();
     RestRequest request = new RestRequest(_url, 'GET');
-    run(executor, request).then((result) {
+    run(request, executor : executor).then((result) {
       completer.complete(result);
     }, onError: (e) {
       completer.completeError(e);
@@ -83,8 +83,8 @@ class Nodes extends Object with HasContext, RestRunnable implements Service  {
   Future get(int id, {ServiceExecutor executor : null}) { 
     Completer<Node> completer = new Completer();
     RestRequest request = new RestRequest('${_url}/${id}', 'GET');
-    run(executor, request).then((result) {
-      completer.complete(new Node._fromJSON(result));
+    run(request, executor : executor).then((result) {
+      completer.complete(new Node.fromJSON(result));
     }, onError: (e) {
       completer.completeError(e);
     });
@@ -94,8 +94,8 @@ class Nodes extends Object with HasContext, RestRunnable implements Service  {
   Future create({Map<String, Object> properties, ServiceExecutor executor : null}) {
     Completer<Node> completer = new Completer();
     RestRequest request = new RestRequest("${_url}", 'POST', properties);
-    run(executor, request).then((result) {
-      completer.complete(new Node._fromJSON(result));
+    run(request, executor : executor).then((result) {
+      completer.complete(new Node.fromJSON(result));
     }, onError: (e) {
       completer.completeError(e);
     });
@@ -103,7 +103,7 @@ class Nodes extends Object with HasContext, RestRunnable implements Service  {
   }
   
   Future delete(int id, {ServiceExecutor executor : null}) {
-    Node node = new Node._fromReference('${_url}/${id}');
+    Node node = new Node.fromReference('${_url}/${id}');
     return node.delete();
   }
 
@@ -123,12 +123,12 @@ class Node extends HasProperties  {
   
   Node();
   
-  Node._fromReference(String reference) : super() {
+  Node.fromReference(String reference) : super() {
     _json = new Map();
     _json['self'] = reference;
   }
   
-  Node._fromJSON(Map data) {
+  Node.fromJSON(Map data) {
     _setContextFromJSON(data);
     _relations = new RelationShips.fromJSON(_json);
     _labels = new Labels._fromURL(_json['labels']); 
@@ -146,7 +146,7 @@ class Node extends HasProperties  {
   Future delete({ServiceExecutor executor : null}) {
     Completer<Node> completer = new Completer();
     RestRequest request = new RestRequest(_json['self'], 'DELETE');
-    run(executor, request).then((_) {
+    run(request, executor : executor).then((_) {
       completer.complete();
     }, onError: (e) {
       completer.completeError(e);

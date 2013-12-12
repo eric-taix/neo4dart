@@ -3,7 +3,7 @@ part of neo4dart;
 /**
  * The starting point for REST api as a singleton (can be called everywhere)
  */
-class Neo4Dart {
+class Neo4Dart extends Object with RestRunnable {
   
   static Neo4Dart _instance;
 

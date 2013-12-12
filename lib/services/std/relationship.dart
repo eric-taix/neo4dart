@@ -12,7 +12,7 @@ class RelationShipTypes extends Object with RestRunnable {
   Future<List<String>> getTypes({ServiceExecutor executor : null}) {
     Completer<Node> completer = new Completer();
     RestRequest request = new RestRequest(_url, 'GET');
-    run(executor, request).then((result) {
+    run(request, executor : executor).then((result) {
       completer.complete((result));
     }, onError: (e) {
       completer.completeError(e);
@@ -38,8 +38,8 @@ class RelationShips extends Object with HasContext, RestRunnable {
       body['data'] = properties;
     }
     RestRequest request = new RestRequest(_json['create_relationship'], 'POST', body);
-    run(executor, request).then((Map data) {
-      completer.complete(new RelationShip._fromJSON(data));
+    run(request, executor : executor).then((Map data) {
+      completer.complete(new RelationShip.fromJSON(data));
     }, onError: (e) {
       completer.completeError(e);
     });
@@ -83,9 +83,9 @@ class RelationShips extends Object with HasContext, RestRunnable {
     Completer<Node> completer = new Completer();
     String url = replacer == null ? _json[property] : replacer.replace(_json[property]);
     RestRequest request = new RestRequest(url, 'GET');
-    run(executor, request).then((List data) {
+    run(request, executor : executor).then((List data) {
       List<RelationShip> relationShips = new List();
-      data.forEach((element) { relationShips.add(new RelationShip._fromJSON(element)); });
+      data.forEach((element) { relationShips.add(new RelationShip.fromJSON(element)); });
       completer.complete(relationShips);
     }, onError: (e) {
       completer.completeError(e);
@@ -105,12 +105,12 @@ class RelationShip extends HasProperties with RestRunnable {
 
   RelationShip();
   
-  RelationShip._fromReference(String reference) {
+  RelationShip.fromReference(String reference) {
     _json = new Map();
     _json['self'] = reference;
   }
   
-  RelationShip._fromJSON(Map context) {
+  RelationShip.fromJSON(Map context) {
     this._setContextFromJSON(context); 
   }
   
@@ -134,7 +134,7 @@ class RelationShip extends HasProperties with RestRunnable {
   Future delete({ServiceExecutor executor : null}) {
     Completer<Node> completer = new Completer();
     RestRequest request = new RestRequest(_json['self'], 'DELETE');
-    run(executor, request).then((result) {
+    run(request, executor : executor).then((result) {
       completer.complete();
     }, onError: (e) {
       completer.completeError(e);
@@ -145,8 +145,8 @@ class RelationShip extends HasProperties with RestRunnable {
   Future<Node> _getNode(String point, {ServiceExecutor executor : null}) {
     Completer<Node> completer = new Completer();
     RestRequest request = new RestRequest(_json[point], 'GET');
-    run(executor, request).then((result) {
-      completer.complete(new Node._fromJSON(result));
+    run(request, executor : executor).then((result) {
+      completer.complete(new Node.fromJSON(result));
     }, onError: (e) {
       completer.completeError(e);
     });

@@ -23,8 +23,8 @@ main() {
        '  \n'
        ]);
   
-  Neo4Dart.init("127.0.0.1").then((Neo4Dart r) {
-    neo4d = r;
+  Neo4Dart.init("127.0.0.1").then((Neo4Dart neo4dart) {
+    neo4d = neo4dart;
     transactionnal();
     serviceRoot();
     streaming();
@@ -160,9 +160,11 @@ void nodes() {
       expect(f, completes);
       return f;
     });
+    Node n1;
     test('20.6.2. Create node with properties', () {
       Future f = neo4d.nodes.create(properties: {"name": "Eric Taix", "birthday": "1968/11/11"});
       f.then((Node node) {
+        n1 = node;
         expect(node, isNotNull);
         expect(node.properties, isNotNull);
         expect(node.properties.length, isNonZero);
@@ -173,14 +175,13 @@ void nodes() {
       return f;
     });
     test('20.6.3. Get node', () {
-      Future f = neo4d.nodes.get(199);
+        Future f = neo4d.nodes.get(n1.id);
       f.then((Node node) {  
         expect(node, isNotNull);
-        expect(node.id, equals(199));
+        expect(node.id, equals(n1.id));
       });
       expect(f, completes);
       return f;
-
     });
     test('20.6.4. Get non-existent node', () {
       Future f = neo4d.nodes.get(9999999999);
@@ -195,7 +196,7 @@ void nodes() {
       expect(f, completes);
     });
     test('20.6.6. Nodes with relationships cannot be deleted', () {
-      Future f = neo4d.nodes.delete(199);
+      Future f = neo4d.nodes.delete(11748);
       f.then(((_) {  
       }), onError: (e) {
         expect(e.statusCode, equals(409));
@@ -880,7 +881,26 @@ void batch() {
       return f;
     });
     test('20.16.2. Refer to items created earlier in the same batch job', () {
-      fail("(Not implemented)");
+      Node n1, n2;
+      RelationShip r1;
+      Batch batch = new Batch();
+      neo4d.nodes.create(properties : {'name' : 'bob'}, executor: batch).then((Node n) => n1 = n);
+      neo4d.nodes.create(properties : {'age' : 12}, executor: batch).then((Node n) => n2 = n);
+      neo4d.run(new RelativeRestRequest('{0}/relationships','POST',{'to': '{1}', 'data': {'since': '2012'}, 'type': 'KNOWS'}), executor: batch).then((Map m) => r1 = new RelationShip.fromJSON(m));
+      Future f = batch.flush();
+      f.then((_) {
+        expect(n1, isNotNull);    
+        expect(n2, isNotNull); 
+        expect(r1, isNotNull);
+        expect(n1.properties['name'], 'bob');
+        expect(n2.properties['age'], 12);
+        expect(r1.startReference, equals(n1.reference));
+        expect(r1.endReference, equals(n2.reference));
+        expect(r1.type, 'KNOWS');
+        expect(r1.properties['since'], '2012');
+      });
+      expect(f, completes);
+      return f;
     });
     test('20.16.3. Execute multiple operations in batch streaming', () {
       fail("(Not implemented)");

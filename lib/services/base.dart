@@ -32,7 +32,7 @@ class HasProperties extends Object with HasContext, RestRunnable {
   Future removeProperty(String key, {ServiceExecutor executor : null}) {
     Completer<Node> completer = new Completer();
     RestRequest request = new RestRequest((_json['property'] as String).replaceAll('{key}', key), 'DELETE');
-    run(executor, request).then((result) {
+    run(request, executor : executor).then((result) {
       (_json['data'] as Map).remove(key);
       completer.complete();
     }, onError: (e) {
@@ -49,7 +49,7 @@ class HasProperties extends Object with HasContext, RestRunnable {
   Future removeProperties({ServiceExecutor executor : null}) {
     Completer<Node> completer = new Completer();
     RestRequest request = new RestRequest(_json['properties'], 'DELETE');
-    run(executor, request).then((result) {
+    run(request, executor : executor).then((result) {
       _json['data'] = { };
       completer.complete();
     }, onError: (e) {
@@ -67,7 +67,7 @@ class HasProperties extends Object with HasContext, RestRunnable {
   Future<Map<String, Object>> getProperties({ServiceExecutor executor : null}) {
     Completer<Node> completer = new Completer();
     RestRequest request = new RestRequest(_json['properties'], 'GET');
-    run(executor, request).then((result) {
+    run(request, executor : executor).then((result) {
       Map<String, Object> properties = result != null && result.isNotEmpty ? result : { };
       _json['data'] = properties;
       completer.complete(properties);
@@ -85,7 +85,7 @@ class HasProperties extends Object with HasContext, RestRunnable {
   Future setProperties(Map<String, Object> properties, {ServiceExecutor executor : null}) {
     Completer<Node> completer = new Completer();
     RestRequest request = new RestRequest(_json['properties'], 'PUT', properties);
-    run(executor, request).then((result) {
+    run(request, executor : executor).then((result) {
       _json['data'] = properties;
       completer.complete();
     }, onError: (e) {
@@ -102,7 +102,7 @@ class HasProperties extends Object with HasContext, RestRunnable {
   Future getProperty(String key, {ServiceExecutor executor : null}) {
     Completer<Node> completer = new Completer();
     RestRequest request = new RestRequest((_json['property'] as String).replaceAll('{key}', key), 'GET');
-    run(executor, request).then((result) {
+    run(request, executor : executor).then((result) {
       // Reflect the value into the current node as there's no result from the server
       (_json["data"] as Map)[key] = result;
       completer.complete(result);
@@ -120,7 +120,7 @@ class HasProperties extends Object with HasContext, RestRunnable {
   Future setProperty(String key, Object value, {ServiceExecutor executor : null}) {
     Completer<Node> completer = new Completer();
     RestRequest request = new RestRequest((_json['property'] as String).replaceAll('{key}', key), 'PUT', value);
-    run(executor, request).then((result) {
+    run(request, executor : executor).then((result) {
       // Reflect the value into the current node as there's no result from the server
       (_json['data'] as Map)[key] = value;
       completer.complete(this);
@@ -193,7 +193,7 @@ class RestRunnable {
   // Default executor which is static
   static ImmediateExecutor defaultExecutor = new ImmediateExecutor();
   
-  Future run(ServiceExecutor executor, RestRequest request) {
+  Future run(RestRequest request, {ServiceExecutor executor : null}) {
     executor = executor == null ? defaultExecutor : executor;
     return executor.execute(request);
   }
