@@ -451,7 +451,7 @@ void nodeProperties() {
     Node n;
     Future f = neo4d.nodes.create(properties: {'firstname' : 'eric', 'name' : 'taix'});
     f.then((Node r) => n = r);
-    expect(f, completes);
+    //expect(f, completes);
     test('20.9.1. Set property on node', () {
       Future f = n.setProperty('name', 'Taix');
       f.then((_) {
@@ -686,7 +686,7 @@ void nodeLabels() {
     Node n;
     Future f = neo4d.nodes.create(properties: {'firstname' : 'eric', 'name' : 'taix'});
     f.then((Node r) => n = r);
-    expect(f, completes);
+    //expect(f, completes);
     test('20.11.1. Adding a label to a node', () {
       Future f = n.labels.add('MANAGER');
       f.then((_) {
