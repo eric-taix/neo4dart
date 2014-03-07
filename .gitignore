@@ -1,4 +1,4 @@
 .DS_Store
-packages
+/packages/
 .project
 pubspec.lock
