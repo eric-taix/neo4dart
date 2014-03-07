@@ -1,3 +1,4 @@
+library neo4darttest;
 import 'dart:io';
 import 'dart:async';
 
@@ -22,7 +23,7 @@ main() {
        '##Results  \n',
        '  \n'
        ]);
-  
+
   Neo4Dart.init("127.0.0.1").then((Neo4Dart r) {
     neo4d = r;
     transactionnal();
@@ -173,10 +174,10 @@ void nodes() {
       return f;
     });
     test('20.6.3. Get node', () {
-      Future f = neo4d.nodes.get(199);
-      f.then((Node node) {  
+      Future f = neo4d.nodes.get(createdNode.id);
+      f.then((Node node) {
         expect(node, isNotNull);
-        expect(node.id, equals(199));
+        expect(node.id, equals(createdNode.id));
       });
       expect(f, completes);
       return f;
@@ -184,7 +185,7 @@ void nodes() {
     });
     test('20.6.4. Get non-existent node', () {
       Future f = neo4d.nodes.get(9999999999);
-      f.then((Node node) {  
+      f.then((Node node) {
         fail('This node should not exist');
       }, onError: (e) {
         expect(e.statusCode, equals(404));
@@ -195,11 +196,19 @@ void nodes() {
       expect(f, completes);
     });
     test('20.6.6. Nodes with relationships cannot be deleted', () {
-      Future f = neo4d.nodes.delete(199);
-      f.then(((_) {  
-      }), onError: (e) {
+      int id = null;
+      Future<Node> start = neo4d.nodes.create();
+      Future<Node> end = neo4d.nodes.create();
+      Future f = Future.wait([start, end]).then((List<Node> nodes) {
+        id = nodes[0].id;
+        return nodes[0].relations.create(nodes[1], "blocks_delete");
+      }).then((_) {
+        return neo4d.nodes.delete(id);
+      }).then(((_) {
+      })).catchError((e) {
         expect(e.statusCode, equals(409));
       });
+      return f;
     });
   });
 }
@@ -283,7 +292,7 @@ void relationShips() {
       return f;
     });
     test('20.7.6. Set all properties on a relationship', () {
-      Future f = rs_20_7_3.setProperties({ "name" : "Eric Taix", "birthday" : "1968/11/11"}); 
+      Future f = rs_20_7_3.setProperties({ "name" : "Eric Taix", "birthday" : "1968/11/11"});
       f.then((_) {
         expect(rs_20_7_3.type, equals("LIKES"));
         expect(rs_20_7_3.properties['foo'], isNull);
@@ -347,7 +356,7 @@ void relationShips() {
                 if (r.endReference == n1.reference) {
                   expect(r.properties['role'], equals('wife'));
                   return;
-                } 
+                }
               }
               fail('Wrong relation: ${r}');
             });
@@ -761,7 +770,7 @@ void nodeLabels() {
     test('20.11.9. List all labels', () {
       fail("(Can't be implemented: wait for Neo4J answer)");
     });
-  }); 
+  });
 }
 
 void indexing() {
@@ -774,7 +783,7 @@ void indexing() {
     });
     test('20.12.3. Drop index', () {
       fail("(Not implemented)");
-    }); 
+    });
   });
 }
 
@@ -788,7 +797,7 @@ void constraints() {
     });
     test('20.13.3. Get all uniqueness constraints for a label', () {
       fail("(Not implemented)");
-    }); 
+    });
     test('20.13.4. Get all constraints for a label', () {
       fail("(Not implemented)");
     });
@@ -797,7 +806,7 @@ void constraints() {
     });
     test('20.13.6. Drop constraint', () {
       fail("(Not implemented)");
-    }); 
+    });
   });
 }
 
@@ -811,7 +820,7 @@ void traversals() {
     });
     test('20.14.3. Return paths from a traversal', () {
       fail("(Not implemented)");
-    }); 
+    });
     test('20.14.4. Traversal returning nodes below a certain depth', () {
       fail("(Not implemented)");
     });
@@ -820,13 +829,13 @@ void traversals() {
     });
     test('20.14.6. Paging through the results of a paged traverser', () {
       fail("(Not implemented)");
-    }); 
+    });
     test('20.14.7. Paged traverser page size', () {
       fail("(Not implemented)");
-    }); 
+    });
     test('20.14.8. Paged traverser timeout', () {
       fail("(Not implemented)");
-    }); 
+    });
   });
 }
 
@@ -840,7 +849,7 @@ void graphAlgo() {
     });
     test('20.15.3. Execute a Dijkstra algorithm and get a single path', () {
       fail("(Not implemented)");
-    }); 
+    });
     test('20.15.4. Execute a Dijkstra algorithm with equal weights on relationships', () {
       fail("(Not implemented)");
     });
@@ -884,7 +893,7 @@ void batch() {
     });
     test('20.16.3. Execute multiple operations in batch streaming', () {
       fail("(Not implemented)");
-    }); 
+    });
   });
 }
 
@@ -898,7 +907,7 @@ void legacyIndexing() {
     });
     test('20.17.3. Delete node index', () {
       fail("(Not implemented)");
-    }); 
+    });
     test('20.17.4. List node indexes', () {
       fail("(Not implemented)");
     });
@@ -933,7 +942,7 @@ void uniqueIndexing() {
     });
     test('20.18.3. Create a unique node or return fail (create)', () {
       fail("(Not implemented)");
-    }); 
+    });
     test('20.18.4. Create a unique node or return fail (fail)', () {
       fail("(Not implemented)");
     });
