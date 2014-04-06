@@ -12,12 +12,15 @@ class Neo4Dart extends Object with RestRunnable {
   
   Nodes _nodes;
   RelationShipTypes _relationTypes;
+  Properties _properties;
   Version _version;
   
   /// Get the Neo4J version
   Version get version => _version;
   /// Get a [Nodes] service instance to request about nodes
   Nodes get nodes => _nodes;
+  /// Get a [Properties] service instance to requets about properties keys used and deleted
+  Properties get properties => _properties;
   /// Get a [RelationShipTypes] service instance to request about relationship types
   RelationShipTypes get relationTypes => _relationTypes;
 
@@ -34,6 +37,8 @@ class Neo4Dart extends Object with RestRunnable {
     _nodes = new Nodes(context['node']);
     _relationTypes = new RelationShipTypes(context['relationship_types']);
     _version = new ServiceFactory().get(ServiceFactory.VERSION, _context);
+    // Hard coded service as there's no way to retrieve the URL from the service root response
+    _properties = new Properties._fromURL('$_baseUrl/propertykeys');
   }
   
   /**

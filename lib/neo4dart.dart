@@ -12,9 +12,12 @@ part 'services/std/root.dart';
 part 'services/std/version.dart';
 part 'services/std/node.dart';
 part 'services/std/relationship.dart';
+part 'services/std/properties.dart';
 part 'services/services.dart';
-part 'executors/executors.dart';
+
+part 'executors/executors.dart'; 
 part 'http/http.dart';
+
 
 Neo4Dart root;
 

@@ -46,7 +46,7 @@ class ServiceFactory {
 //    register("relationship_index");
 //    register("extensions_info");
 //    register("relationship_types");
-    register("batch", (String url) => new Batch._fromUrl(url));
+    register(BATCH, (String url) => new Batch._fromUrl(url));
 //    register("cypher");
     register(VERSION, (String version) => new Version(version));
 //    
