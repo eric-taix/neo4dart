@@ -51,6 +51,8 @@ class Neo4Dart extends Object with RestRunnable {
     _send(baseUrl).then((result) {
        _instance = new Neo4Dart._fromJSON(baseUrl, result); 
       completer.complete(_instance);
+    }, onError: (e) {
+      completer.completeError(e);
     });
     return completer.future;
   }

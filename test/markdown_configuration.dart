@@ -1,14 +1,17 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:unittest/unittest.dart';
-import 'package:unittest/src/utils.dart';
+import 'package:unittest/src/utils.dart' as utils;
+import 'utils.dart';
 
 class MakedownConfiguration extends SimpleConfiguration {
   
   RandomAccessFile _markdownRAF;
   String failedImg = '![Failed](./failed.png)';
   String passedImg = '![Passed](./passed.png)';
+  String notImplImg = '![Passed](./notimpl.png)';
   List<String> _headers;
+  String _groupName;
   
   MakedownConfiguration(String markdownFilePath, [List<String> this._headers]) : super() {
     groupSep = ' : ';
@@ -20,12 +23,23 @@ class MakedownConfiguration extends SimpleConfiguration {
 
   String formatResult(TestCase testCase) {
     var result = new StringBuffer();
-    result.write(testCase.passed ? passedImg : failedImg);
-    result.write(' ${testCase.description}');
+    if (_groupName == null || _groupName != testCase.currentGroup) {
+      _groupName = testCase.currentGroup;
+      result.write('###$_groupName  \n');
+      result.write("  \n");
+    }
+    if (testCase.message != NOT_YET_IMPLEMENTED) {
+      result.write(testCase.passed ? passedImg : failedImg);
+      result.write(' ${testCase.description}');
+    }
+    else {
+      result.write(notImplImg);
+      result.write(' ${testCase.description}');
+    }
     result.write("\n");
 
     if (testCase.message != '') {
-      result.write(indent(testCase.message));
+      result.write(utils.indent(testCase.message));
       result.write("\n");
     }
 
@@ -62,8 +76,9 @@ class MakedownConfiguration extends SimpleConfiguration {
     }
     // Print each test's result.
     for (final t in results) {
-      print(formatResult(t).trim()+'\n');
-      _markdownRAF.writeStringSync(formatResult(t).trim()+ '  \n');
+      String result = formatResult(t).trim()+ '  \n';
+      print(result);
+      _markdownRAF.writeStringSync(result);
     }
 
     // Show the summary.
